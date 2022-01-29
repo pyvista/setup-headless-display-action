@@ -25,7 +25,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup headless Display
-        uses: pyvista/setup-headless-display-action@v0.1
+        uses: pyvista/setup-headless-display-action@v1
 ```
 
 
@@ -54,7 +54,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup headless Display
-        uses: pyvista/setup-headless-display-action@v0.1
+        uses: pyvista/setup-headless-display-action@v1
 
       - name: Setup Python
         uses: actions/setup-python@v1
