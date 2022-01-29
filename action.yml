@@ -34,12 +34,12 @@ runs:
       shell: bash
       run: sleep 3
 
-    - name: Configure for PyVista on Linux
-      if: runner.os == 'Linux' || runner.os == 'macOS'
+    - name: Configure for PyVista on Linux and macOS
+      if: runner.os != 'Windows'
       shell: bash
-      run: echo "PYVISTA_OFF_SCREEN=True" >> $GITHUB_ENV
+      run: echo "PYVISTA_OFF_SCREEN=true" >> $GITHUB_ENV
 
     - name: Configure for PyVista on Windows
       if: runner.os == 'Windows'
-      shell: bash
-      run: echo "PYVISTA_OFF_SCREEN=True" >> $env:GITHUB_ENV
+      shell: cmd
+      run: echo "PYVISTA_OFF_SCREEN=true" >> $env:GITHUB_ENV
