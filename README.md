@@ -12,6 +12,10 @@ on:
   pull_request:
   workflow_dispatch:
   push:
+    tags:
+      - "*"
+    branches:
+      - main
 
 jobs:
   test:
@@ -34,6 +38,10 @@ on:
   pull_request:
   workflow_dispatch:
   push:
+    tags:
+      - "*"
+    branches:
+      - main
 
 jobs:
   test:
@@ -61,5 +69,6 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
+          name: sphere
           path: ${{ matrix.os }}-sphere.png
 ```
