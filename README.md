@@ -18,5 +18,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Xvfb
-        uses: pyvista/setup-headless-display-action
+        uses: pyvista/setup-headless-display-action@v0.0.1
 ```
