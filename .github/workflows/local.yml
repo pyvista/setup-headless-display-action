@@ -1,0 +1,44 @@
+name: Local Testing
+
+on:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * *"
+  push:
+    tags:
+      - "*"
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        debug: [false, true]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Test Action
+        uses: ./
+        with:
+          debug: ${{ matrix.debug }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+
+      - name: Install PyVista
+        run: pip install pyvista
+
+      - name: Test PyVista
+        run: python test_pyvista.py
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: sphere
+          path: sphere.png
