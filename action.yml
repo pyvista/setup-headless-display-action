@@ -1,5 +1,5 @@
 name: 'setup-headless-display-action'
-description: 'Set up a headless display using xvfb on Linux.'
+description: 'Setup a headless display on Linux using xvfb'
 author: PyVista Developers'
 branding:
   icon: 'monitor'
