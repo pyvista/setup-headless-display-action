@@ -42,4 +42,6 @@ runs:
     - name: Configure for PyVista on Windows
       if: runner.os == 'Windows'
       shell: cmd
-      run: echo "PYVISTA_OFF_SCREEN=true" >> $env:GITHUB_ENV
+      run: |
+        chcp 65001 #set code page to utf-8
+        echo "PYVISTA_OFF_SCREEN=true" >> $env:GITHUB_ENV
