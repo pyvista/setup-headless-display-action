@@ -1,11 +1,6 @@
 name: 'setup-headless-display-action'
 description: 'Set up a headless display using xvfb on Linux.'
 author: PyVista Developers'
-inputs:
-  debug:
-    description: 'Run debug commands'
-    required: false
-    default: false
 branding:
   icon: 'monitor'
   color: 'blue'
@@ -21,12 +16,6 @@ runs:
         export DISPLAY=:99.0
         echo "DISPLAY=:99.0" >> $GITHUB_ENV
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-    - name: Debug
-      shell: bash
-      if: ${{ inputs.debug == 'true' }}
-      run: |
-        which Xvfb
-        sh -e $(which Xvfb) start
     - name: Give xvfb some time to start
       shell: bash
       run: sleep 3

@@ -14,10 +14,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        debug: [false, true]
 
     steps:
       - name: Checkout
@@ -25,8 +21,6 @@ jobs:
 
       - name: Test Action
         uses: ./
-        with:
-          debug: ${{ matrix.debug }}
 
       - name: Set up Python
         uses: actions/setup-python@v1
