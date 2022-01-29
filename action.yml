@@ -25,8 +25,8 @@ runs:
       shell: bash
       if: ${{ inputs.debug == 'true' }}
       run: |
-        ls -l /etc/init.d/
-        sh -e /etc/init.d/xvfb start
+        which Xvfb
+        sh -e $(which Xvfb) start
     - name: Give xvfb some time to start
       shell: bash
       run: sleep 3
