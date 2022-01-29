@@ -1,6 +1,6 @@
 # Setup Headless Display Action
 
-Setup a headless display on Linux using xvfb
+Setup a headless display on Linux and Windows (not needed on MacOS)
 
 
 ## 🚀 Usage
@@ -15,8 +15,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup Xvfb
+      - name: Setup headless Display
         uses: pyvista/setup-headless-display-action@v0.0.1
 ```
