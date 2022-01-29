@@ -4,7 +4,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: "0 4 * * *"
+    - cron: "0 4 1 * *"
   push:
     tags:
       - "*"
@@ -46,4 +46,5 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
+          name: cube
           path: ${{ matrix.os }}-cube.png
