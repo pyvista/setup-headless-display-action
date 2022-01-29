@@ -1,6 +1,7 @@
 name: Production Workflow for latest release
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 4 1 * *"
 
