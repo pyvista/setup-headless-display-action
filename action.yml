@@ -1,5 +1,5 @@
 name: 'setup-headless-display-action'
-description: 'Setup a headless display on Linux using xvfb'
+description: 'Setup a headless display on Linux and Windows'
 author: PyVista Developers'
 branding:
   icon: 'monitor'
@@ -7,20 +7,39 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Install GL Dependencies
+    - name: Install Linux GL Dependencies
+      if: runner.os == 'Linux'
       shell: bash
       run: sudo apt-get update && sudo apt-get install libgl1-mesa-glx xvfb -y
-    - name: Configure headless display
+
+    - name: Install Windows GL Dependencies
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: |
+        Set-StrictMode -Version Latest
+        $ErrorActionPreference = "Stop"
+        $PSDefaultParameterValues['*:ErrorAction']='Stop'
+        powershell ${{ github.action_path }}/windows/install_opengl.ps1
+
+    - name: Configure headless display on Linux
+      if: runner.os == 'Linux'
       shell: bash
       run: |
         export DISPLAY=:99.0
         echo "DISPLAY=:99.0" >> $GITHUB_ENV
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-    - name: Give xvfb some time to start
+
+    - name: Give xvfb some time to start on Linux
+      if: runner.os == 'Linux'
       shell: bash
       run: sleep 3
-    - name: Configure for PyVista because we intend this to be used with PyVista
+
+    - name: Configure for PyVista on Linux
+      if: runner.os == 'Linux'
       shell: bash
-      run: |
-        export PYVISTA_OFF_SCREEN=True
-        echo "PYVISTA_OFF_SCREEN=True" >> $GITHUB_ENV
+      run: echo "PYVISTA_OFF_SCREEN=True" >> $GITHUB_ENV
+
+    - name: Configure for PyVista on Windows
+      if: runner.os == 'Linux'
+      shell: bash
+      run: echo "PYVISTA_OFF_SCREEN=True" >> $env:GITHUB_ENV
