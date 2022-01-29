@@ -1,4 +1,4 @@
-name: Production Workflow for latest release
+name: Test v1 release
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup headless Display
+      - name: Setup headless display
         uses: pyvista/setup-headless-display-action@v1
 
       - name: Setup Python

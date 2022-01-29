@@ -2,6 +2,10 @@
 
 Setup a headless display on Linux and Windows (not needed on MacOS)
 
+```yml
+- name: Setup headless display
+  uses: pyvista/setup-headless-display-action@v1
+```
 
 ## 🚀 Usage
 
@@ -24,7 +28,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup headless Display
+      - name: Setup headless display
         uses: pyvista/setup-headless-display-action@v1
 ```
 
@@ -53,7 +57,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup headless Display
+      - name: Setup headless display
         uses: pyvista/setup-headless-display-action@v1
 
       - name: Setup Python
