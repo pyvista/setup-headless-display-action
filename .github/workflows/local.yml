@@ -39,3 +39,10 @@ jobs:
         with:
           name: ${{ matrix.os }}-sphere
           path: sphere.png
+
+      - name: Second test of PyVista
+        run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-cube.png')"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ${{ matrix.os }}-cube.png
