@@ -14,9 +14,13 @@ runs:
 
     - name: Install Windows GL Dependencies
       if: runner.os == 'Windows'
-      shell: powershell
+      shell: cmd
       run: |
-        Copy-Item "${{ github.action_path }}/windows/mesa-22.0.1/opengl32.dll" -Destination "C:\Windows\system32\opengl32.dll"
+        Set-StrictMode -Version Latest
+        $ErrorActionPreference = "Stop"
+        $PSDefaultParameterValues['*:ErrorAction']='Stop'
+        set action_path=${{ github.action_path }}
+        powershell ${{ github.action_path }}/windows/install_opengl.ps1
 
     - name: Configure headless display on Linux
       if: runner.os == 'Linux'
