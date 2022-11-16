@@ -1,11 +1,17 @@
-function InstallMesaOpenGL ($version) {
-    $filepath = "C:\Windows\system32\opengl32.dll"
-    $sourcepath = "${env:ActionPath}\windows\mesa-$version\opengl32.dll"
+function InstallDLL ($name) {
+    $filepath = "C:\Windows\system32\$name"
+    $sourcepath = "${env:ActionPath}\windows\mesa-$version\$name"
     takeown /F $filepath /A
     icacls $filepath /grant "${env:ComputerName}\${env:UserName}:F"
     Remove-item -LiteralPath $filepath
     Write-Host "Installing to" $filepath "from" $sourcepath
     Copy-Item $sourcepath -Destination $filepath
+}
+
+
+function InstallMesaOpenGL ($version) {
+    InstallDLL "opengl32.dll"
+    InstallDLL "libglapi.dll"
 }
 
 
