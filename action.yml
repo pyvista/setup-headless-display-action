@@ -16,10 +16,8 @@ runs:
       if: runner.os == 'Windows'
       shell: cmd
       run: |
-        Set-StrictMode -Version Latest
-        $ErrorActionPreference = "Stop"
         $PSDefaultParameterValues['*:ErrorAction']='Stop'
-        set action_path=${{ github.action_path }}
+        set ActionPath=${{ github.action_path }}
         powershell ${{ github.action_path }}\windows\install_opengl.ps1
 
     - name: Configure headless display on Linux

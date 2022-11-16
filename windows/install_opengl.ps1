@@ -4,7 +4,7 @@ function InstallMesaOpenGL ($version) {
     icacls $filepath /grant "${env:ComputerName}\${env:UserName}:F"
     Remove-item -LiteralPath $filepath
     Write-Host "Installing to" $filepath
-    Copy-Item "$action_path\windows\mesa-$version\opengl32.dll" -Destination $filepath
+    Copy-Item "${env:ActionPath}\windows\mesa-$version\opengl32.dll" -Destination $filepath
 }
 
 
