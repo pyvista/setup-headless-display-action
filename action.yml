@@ -17,7 +17,7 @@ runs:
       shell: cmd
       run: |
         $PSDefaultParameterValues['*:ErrorAction']='Stop'
-        set ActionPath=${{ github.action_path }}
+        set ActionPath=${{ github.env.GITHUB_ACTION_PATH }}
         powershell ${{ github.action_path }}\windows\install_opengl.ps1
 
     - name: Configure headless display on Linux
