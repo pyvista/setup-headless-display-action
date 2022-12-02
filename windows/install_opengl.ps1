@@ -1,5 +1,5 @@
 # Adapted from VisPy
-$MESA_GL_URL = "https://github.com/pyvista/setup-headless-display-action/raw/mesa/windows/mesa-22.0.1"
+$MESA_GL_URL = "https://github.com/pyvista/setup-headless-display-action/raw/mesa/windows/mesa-22.0.1/"
 
 function DownloadMesaOpenGL ($architecture) {
     [Net.ServicePointManager]::SecurityProtocol = 'Tls, Tls11, Tls12'
