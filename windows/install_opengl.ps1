@@ -35,7 +35,7 @@ function DownloadMesaOpenGL ($architecture) {
 
 
 function main () {
-    DownloadMesaOpenGL "32"
+    DownloadMesaOpenGL "64"
 }
 
 main
