@@ -5,7 +5,7 @@ function DownloadMesaOpenGL ($architecture) {
     [Net.ServicePointManager]::SecurityProtocol = 'Tls, Tls11, Tls12'
     $webclient = New-Object System.Net.WebClient
     # Download and retry up to 3 times in case of network transient errors.
-    $url = $MESA_GL_URL + "opengl32" + $architecture + ".dll"
+    $url = $MESA_GL_URL + "opengl32" + ".dll"
     if ($architecture -eq "32") {
         $filepath = "C:\Windows\SysWOW64\opengl32.dll"
     } else {
