@@ -1,16 +1,13 @@
 # Adapted from VisPy
 $MESA_GL_URL = "https://github.com/pyvista/setup-headless-display-action/raw/mesa/windows/mesa-22.0.1/"
 
-function DownloadMesaOpenGL ($architecture) {
+function DownloadMesaOpenGL () {
+    # Only support 64 architecture
     [Net.ServicePointManager]::SecurityProtocol = 'Tls, Tls11, Tls12'
     $webclient = New-Object System.Net.WebClient
     # Download and retry up to 3 times in case of network transient errors.
     $url = $MESA_GL_URL + "opengl32" + ".dll"
-    if ($architecture -eq "32") {
-        $filepath = "C:\Windows\SysWOW64\opengl32.dll"
-    } else {
-        $filepath = "C:\Windows\system32\opengl32.dll"
-    }
+    $filepath = "C:\Windows\system32\opengl32.dll"
     takeown /F $filepath /A
     icacls $filepath /grant "${env:ComputerName}\${env:UserName}:F"
     Remove-item -LiteralPath $filepath
@@ -35,7 +32,7 @@ function DownloadMesaOpenGL ($architecture) {
 
 
 function main () {
-    DownloadMesaOpenGL "64"
+    DownloadMesaOpenGL
 }
 
 main
