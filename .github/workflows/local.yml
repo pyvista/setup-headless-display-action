@@ -18,9 +18,9 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-2019, windows-2022]
         qt: [""]
-      include:
-        os: ubuntu-latest
-        qt: "qt"
+        include:
+        - os: ubuntu-latest
+          qt: "qt"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
