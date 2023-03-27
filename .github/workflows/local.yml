@@ -29,7 +29,7 @@ jobs:
       - name: Test Action
         uses: ./
         with:
-          qt-libs: ${{ matrix.qt == 'qt' }}
+          qt: ${{ matrix.qt == 'qt' }}
 
       - name: Setup Python
         uses: actions/setup-python@v1
@@ -55,7 +55,7 @@ jobs:
         run: |
           set -eo pipefail
           pip install PyQt6 matplotlib
-          python tests/test_qt.py
+          QT_DEBUG_PLUGINS=1 LIBGL_DEBUG=verbose python tests/test_qt.py
         shell: bash
 
       - uses: actions/upload-artifact@v2
