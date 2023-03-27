@@ -51,7 +51,7 @@ jobs:
         run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-cube.png')"
 
       - name: Test Qt
-        if: matrix.qt == "qt"
+        if: matrix.qt == 'qt'
         run: |
           set -eo pipefail
           pip install PyQt6 matplotlib
