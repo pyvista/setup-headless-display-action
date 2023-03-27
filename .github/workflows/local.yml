@@ -55,7 +55,7 @@ jobs:
         run: |
           set -eo pipefail
           pip install PyQt6 matplotlib
-          python test_qt.py
+          python tests/test_qt.py
         shell: bash
 
       - uses: actions/upload-artifact@v2
