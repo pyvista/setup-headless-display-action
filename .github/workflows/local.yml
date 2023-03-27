@@ -55,7 +55,7 @@ jobs:
         run: |
           set -eo pipefail
           pip install PyQt6 matplotlib
-          python test_qt.py-c "import matplotlib; matplotlib.use('QtAgg'); import matplotlib.pyplot as plt; plt.figure(); backend = matplotlib.get_backend(); assert backend == 'QtAgg', backend"
+          python test_qt.py
         shell: bash
 
       - uses: actions/upload-artifact@v2
