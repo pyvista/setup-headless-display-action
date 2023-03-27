@@ -17,6 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-2019, windows-2022]
+        qt: [""]
+      include:
+        os: ubuntu-latest
+        qt: "qt"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -24,17 +28,19 @@ jobs:
 
       - name: Test Action
         uses: ./
+        with:
+          qt-libs: ${{ matrix.qt == 'qt' }}
 
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.9
+          python-version: "3.9"
 
       - name: Install PyVista
         run: pip install pyvista
 
       - name: Test PyVista
-        run: python test_pyvista.py
+        run: python tests/test_pyvista.py
 
       - uses: actions/upload-artifact@v2
         with:
@@ -43,6 +49,14 @@ jobs:
 
       - name: Second test of PyVista
         run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-cube.png')"
+
+      - name: Test Qt
+        if: matrix.qt == "qt"
+        run: |
+          set -eo pipefail
+          pip install PyQt6 matplotlib
+          python test_qt.py-c "import matplotlib; matplotlib.use('QtAgg'); import matplotlib.pyplot as plt; plt.figure(); backend = matplotlib.get_backend(); assert backend == 'QtAgg', backend"
+        shell: bash
 
       - uses: actions/upload-artifact@v2
         with:
