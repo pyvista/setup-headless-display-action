@@ -32,6 +32,17 @@ jobs:
         uses: pyvista/setup-headless-display-action@v1
 ```
 
+### Options
+
+- `qt` (default `false`): set to `true` to install libraries required for Qt
+  on Linux, e.g.:
+  ```yml
+      - uses: pyvista/setup-headless-display-action@v1
+        with:
+          qt: true
+  ```
+- `pyvista` (default `true`): set to `false` if you don't want to set env
+  vars to use PyVista in offscreen mode.
 
 ### 🖼️ PyVista Example
 
