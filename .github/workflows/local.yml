@@ -20,7 +20,11 @@ jobs:
         qt: [""]
         include:
         - os: ubuntu-latest
-          qt: "qt"
+          qt: "pyqt5"
+        - os: ubuntu-latest
+          qt: "pyqt6"
+        - os: ubuntu-latest
+          qt: "pyside6"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -29,7 +33,7 @@ jobs:
       - name: Test Action
         uses: ./
         with:
-          qt: ${{ matrix.qt == 'qt' }}
+          qt: ${{ matrix.qt != '' }}
 
       - name: Setup Python
         uses: actions/setup-python@v1
@@ -51,10 +55,10 @@ jobs:
         run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-cube.png')"
 
       - name: Test Qt
-        if: matrix.qt == 'qt'
+        if: matrix.qt != ''
         run: |
           set -eo pipefail
-          pip install PyQt6 matplotlib
+          pip install ${{ matrix.qt }} matplotlib
           QT_DEBUG_PLUGINS=1 LIBGL_DEBUG=verbose python tests/test_qt.py
         shell: bash
 
