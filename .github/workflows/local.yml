@@ -18,6 +18,7 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-2019, windows-2022]
         qt: [""]
+        python: ["3.9"]
         include:
         - os: ubuntu-latest
           qt: "pyqt5"
@@ -25,7 +26,7 @@ jobs:
           qt: "pyqt6"
         - os: ubuntu-latest
           qt: "pyqt6"
-          kind: "pre"
+          python: "3.11"
         - os: ubuntu-latest
           qt: "pyside6"
     runs-on: ${{ matrix.os }}
@@ -41,7 +42,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
-          python-version: "3.9"
+          python-version: ${{ matrix.python }}
 
       - name: Install PyVista
         run: pip install pyvista
@@ -56,10 +57,6 @@ jobs:
 
       - name: Second test of PyVista
         run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-cube.png')"
-
-      - name: Install Qt prerelease
-        if: matrix.qt == 'pyqt6' && matrix.kind == 'pre'
-        run: pip install --pre --only-binary ":all:" --extra-index-url https://www.riverbankcomputing.com/pypi/simple PyQt6 PyQt6-sip PyQt6-Qt6
 
       - name: Test Qt
         if: matrix.qt != ''

@@ -29,7 +29,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup headless display
-        uses: pyvista/setup-headless-display-action@v1
+        uses: pyvista/setup-headless-display-action@main
 ```
 
 ### Options
@@ -37,7 +37,7 @@ jobs:
 - `qt` (default `false`): set to `true` to install libraries required for Qt
   on Linux, e.g.:
   ```yml
-      - uses: pyvista/setup-headless-display-action@v1
+      - uses: pyvista/setup-headless-display-action@main
         with:
           qt: true
   ```
@@ -69,12 +69,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup headless display
-        uses: pyvista/setup-headless-display-action@v1
+        uses: pyvista/setup-headless-display-action@main
 
       - name: Setup Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Install PyVista
         run: pip install pyvista
