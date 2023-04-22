@@ -24,6 +24,9 @@ jobs:
         - os: ubuntu-latest
           qt: "pyqt6"
         - os: ubuntu-latest
+          qt: "pyqt6"
+          kind: "pre"
+        - os: ubuntu-latest
           qt: "pyside6"
     runs-on: ${{ matrix.os }}
     steps:
@@ -53,6 +56,10 @@ jobs:
 
       - name: Second test of PyVista
         run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-cube.png')"
+
+      - name: Install Qt prerelease
+        if: matrix.qt == 'pyqt6' && matrix.kind == 'pre'
+        run: pip install --pre --only-binary ":all:" --extra-index-url https://www.riverbankcomputing.com/pypi/simple PyQt6 PyQt6-sip PyQt6-Qt6
 
       - name: Test Qt
         if: matrix.qt != ''
