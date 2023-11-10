@@ -4,7 +4,7 @@ Setup a headless display on Linux and Windows (not needed on MacOS)
 
 ```yml
 - name: Setup headless display
-  uses: pyvista/setup-headless-display-action@v1
+  uses: pyvista/setup-headless-display-action@v2
 ```
 
 ## 🚀 Usage
@@ -29,7 +29,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup headless display
-        uses: pyvista/setup-headless-display-action@v1
+        uses: pyvista/setup-headless-display-action@v2
 ```
 
 ### Options
@@ -37,7 +37,7 @@ jobs:
 - `qt` (default `false`): set to `true` to install libraries required for Qt
   on Linux, e.g.:
   ```yml
-      - uses: pyvista/setup-headless-display-action@v1
+      - uses: pyvista/setup-headless-display-action@v2
         with:
           qt: true
   ```
@@ -69,7 +69,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup headless display
-        uses: pyvista/setup-headless-display-action@v1
+        uses: pyvista/setup-headless-display-action@v2
 
       - name: Setup Python
         uses: actions/setup-python@v1
