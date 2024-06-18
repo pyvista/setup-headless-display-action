@@ -9,17 +9,18 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-14, macos-13, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: pyvista/setup-headless-display-action@v1
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.12
       - run: pip install pyvista
       - name: Use PyVista
         run: python -c "import pyvista;pyvista.Sphere().plot(screenshot='${{ matrix.os }}-sphere.png')"
       - uses: actions/upload-artifact@v4
         with:
-          name: sphere
+          name: ${{ matrix.os }}-sphere
           path: ${{ matrix.os }}-sphere.png
+          if-no-files-found: error

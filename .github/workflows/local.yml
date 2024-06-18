@@ -39,10 +39,11 @@ jobs:
       - run: python tests/test_pyvista.py
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-sphere
+          name: ${{ matrix.os }}-${{ matrix.qt }}-sphere
           path: sphere.png
+          if-no-files-found: error
       - name: Second test of PyVista
-        run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-cube.png')"
+        run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-${{ matrix.qt }}-cube.png')"
       - name: Test Qt
         if: matrix.qt != ''
         run: |
@@ -52,5 +53,6 @@ jobs:
         shell: bash
       - uses: actions/upload-artifact@v4
         with:
-          name: cube
-          path: ${{ matrix.os }}-cube.png
+          name: ${{ matrix.os }}-${{ matrix.qt }}-cube
+          path: ${{ matrix.os }}-${{ matrix.qt }}-cube.png
+          if-no-files-found: error
