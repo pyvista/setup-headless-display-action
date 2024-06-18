@@ -1,6 +1,6 @@
 name: Local Testing
 
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
   workflow_dispatch:
   schedule:
@@ -16,44 +16,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-2019, windows-2022]
+        os: [macos-14, macos-13, ubuntu-latest, ubuntu-20.04, windows-2019, windows-2022]
         qt: [""]
         include:
-        - os: ubuntu-latest
-          qt: "pyqt5"
-        - os: ubuntu-latest
-          qt: "pyqt6"
-        - os: ubuntu-latest
-          qt: "pyside6"
+          - os: ubuntu-latest
+            qt: "pyqt5"
+          - os: ubuntu-latest
+            qt: "pyqt6"
+          - os: ubuntu-latest
+            qt: "pyside6"
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v4
       - name: Test Action
         uses: ./
         with:
           qt: ${{ matrix.qt != '' }}
-
-      - name: Setup Python
-        uses: actions/setup-python@v1
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
-
-      - name: Install PyVista
-        run: pip install pyvista
-
-      - name: Test PyVista
-        run: python tests/test_pyvista.py
-
-      - uses: actions/upload-artifact@v2
+          python-version: "3.12"
+      - run: pip install pyvista
+      - run: python tests/test_pyvista.py
+      - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-sphere
+          name: ${{ matrix.os }}-${{ matrix.qt }}-sphere
           path: sphere.png
-
+          if-no-files-found: error
       - name: Second test of PyVista
-        run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-cube.png')"
-
+        run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-${{ matrix.qt }}-cube.png')"
       - name: Test Qt
         if: matrix.qt != ''
         run: |
@@ -61,8 +51,8 @@ jobs:
           pip install ${{ matrix.qt }} matplotlib
           QT_DEBUG_PLUGINS=1 LIBGL_DEBUG=verbose python tests/test_qt.py
         shell: bash
-
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
-          name: cube
-          path: ${{ matrix.os }}-cube.png
+          name: ${{ matrix.os }}-${{ matrix.qt }}-cube
+          path: ${{ matrix.os }}-${{ matrix.qt }}-cube.png
+          if-no-files-found: error
