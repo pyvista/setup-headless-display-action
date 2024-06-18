@@ -46,7 +46,7 @@ jobs:
       - name: Test PyVista
         run: python tests/test_pyvista.py
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.os }}-sphere
           path: sphere.png
@@ -62,7 +62,7 @@ jobs:
           QT_DEBUG_PLUGINS=1 LIBGL_DEBUG=verbose python tests/test_qt.py
         shell: bash
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v2
         with:
           name: cube
           path: ${{ matrix.os }}-cube.png
