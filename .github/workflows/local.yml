@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-2019, windows-2022]
+        os: [macos-14, macos-13, ubuntu-latest, ubuntu-20.04, windows-2019, windows-2022]
         qt: [""]
         include:
         - os: ubuntu-latest
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
-          python-version: "3.9"
+          python-version: "3.12"
 
       - name: Install PyVista
         run: pip install pyvista
