@@ -66,3 +66,14 @@ jobs:
         with:
           name: cube
           path: ${{ matrix.os }}-cube.png
+      
+      - name: Test Vispy Qt
+        if: matrix.qt != ''
+        run: |
+          pip install vispy qtpy pillow
+          QT_DEBUG_PLUGINS=1 python tests/test_vispy_qt.py
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: vispy-volume
+          path: "*_vispy_volume.png"
