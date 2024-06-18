@@ -1,6 +1,6 @@
 name: Test v1 release
 
-on:
+on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
     - cron: "0 4 1 * *"
@@ -9,24 +9,18 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-14, macos-13, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup headless display
-        uses: pyvista/setup-headless-display-action@v1
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: pyvista/setup-headless-display-action@v2
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-
-      - name: Install PyVista
-        run: pip install pyvista
-
+          python-version: 3.12
+      - run: pip install pyvista
       - name: Use PyVista
         run: python -c "import pyvista;pyvista.Sphere().plot(screenshot='${{ matrix.os }}-sphere.png')"
-
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
-          name: sphere
+          name: ${{ matrix.os }}-sphere
           path: ${{ matrix.os }}-sphere.png
+          if-no-files-found: error
