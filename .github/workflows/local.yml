@@ -48,7 +48,7 @@ jobs:
         if: matrix.qt != ''
         run: |
           set -eo pipefail
-          pip install ${{ matrix.qt }} matplotlib
+          pip install ${{ matrix.qt }} matplotlib qtpy
           QT_DEBUG_PLUGINS=1 LIBGL_DEBUG=verbose python tests/test_qt.py
         shell: bash
       - uses: actions/upload-artifact@v4
@@ -59,7 +59,7 @@ jobs:
       - name: Test Vispy Qt
         if: matrix.qt != ''
         run: |
-          pip install vispy qtpy pillow
+          pip install vispy pillow
           QT_DEBUG_PLUGINS=1 python tests/test_vispy_qt.py
         env:
           MATRIX_OS: ${{ matrix.os }}
