@@ -65,6 +65,7 @@ jobs:
           MATRIX_OS: ${{ matrix.os }}
           MATRIX_QT: ${{ matrix.qt }}
       - uses: actions/upload-artifact@v4
+        if: matrix.qt != ''
         with:
           name: ${{ matrix.os }}-${{ matrix.qt }}-vispy-volume
           path: ${{ matrix.os }}-${{ matrix.qt }}-vispy-volume.png
