@@ -60,7 +60,7 @@ jobs:
         if: matrix.qt != ''
         run: |
           pip install vispy pillow pyopengl
-          QT_DEBUG_PLUGINS=1 python tests/test_vispy_qt.py
+          python tests/test_vispy_qt.py
         env:
           MATRIX_OS: ${{ matrix.os }}
           MATRIX_QT: ${{ matrix.qt }}
