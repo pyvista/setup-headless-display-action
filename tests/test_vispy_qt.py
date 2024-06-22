@@ -10,6 +10,7 @@ from PIL import Image
 qapp = QApplication([])
 canvas = scene.SceneCanvas(size=(512, 512))
 view = canvas.central_widget.add_view()
+np.random.seed(0)
 vol_data = np.random.rand(64, 64, 64).astype(np.float32)
 image = scene.visuals.Volume(vol_data, cmap="viridis", parent=view.scene)
 view.camera = scene.ArcballCamera()
