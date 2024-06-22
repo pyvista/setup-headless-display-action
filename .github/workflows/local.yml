@@ -23,6 +23,8 @@ jobs:
             qt: "pyqt5"
           - os: ubuntu-latest
             qt: "pyqt6"
+          - os: windows-latest
+            qt: "pyqt6"
           - os: ubuntu-latest
             qt: "pyside6"
     runs-on: ${{ matrix.os }}
