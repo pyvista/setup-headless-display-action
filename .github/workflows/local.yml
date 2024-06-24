@@ -23,6 +23,8 @@ jobs:
             qt: "pyqt5"
           - os: ubuntu-24.04
             qt: "pyqt6"
+          - os: windows-latest
+            qt: "pyqt6"
           - os: ubuntu-latest
             qt: "pyside6"
     runs-on: ${{ matrix.os }}
@@ -48,7 +50,7 @@ jobs:
         if: matrix.qt != ''
         run: |
           set -eo pipefail
-          pip install ${{ matrix.qt }} matplotlib
+          pip install ${{ matrix.qt }} matplotlib qtpy
           QT_DEBUG_PLUGINS=1 LIBGL_DEBUG=verbose python tests/test_qt.py
         shell: bash
       - uses: actions/upload-artifact@v4
@@ -56,3 +58,16 @@ jobs:
           name: ${{ matrix.os }}-${{ matrix.qt }}-cube
           path: ${{ matrix.os }}-${{ matrix.qt }}-cube.png
           if-no-files-found: error
+      - name: Test Vispy Qt
+        if: matrix.qt != ''
+        run: |
+          pip install vispy pillow pyopengl
+          python tests/test_vispy_qt.py
+        env:
+          MATRIX_OS: ${{ matrix.os }}
+          MATRIX_QT: ${{ matrix.qt }}
+      - uses: actions/upload-artifact@v4
+        if: matrix.qt != ''
+        with:
+          name: ${{ matrix.os }}-${{ matrix.qt }}-vispy-volume
+          path: ${{ matrix.os }}-${{ matrix.qt }}-vispy-volume.png
