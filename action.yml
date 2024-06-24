@@ -16,11 +16,21 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Install Linux dependencies
+    - name: Update apt
       if: runner.os == 'Linux'
       shell: bash
       # TODO: Pyvista uses `xset` which is part of x11-xserver-utils, maybe a better way to check?
-      run: sudo apt update && sudo apt install libgl1-mesa-glx xvfb x11-xserver-utils -y
+      run: sudo apt update
+
+    - name: Install Linux dependencies
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get install -y \
+          libglx-mesa0 \
+          libgl1 \
+          xvfb \
+          x11-xserver-utils
 
     - name: Install Linux Qt dependencies
       if: runner.os == 'Linux' && inputs.qt != 'false'
@@ -64,14 +74,7 @@ runs:
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         sleep 3
 
-    - name: Configure for PyVista on Linux and macOS
-      if: runner.os != 'Windows' && inputs.pyvista != 'false'
+    - name: Configure for PyVista
+      if: inputs.pyvista != 'false'
       shell: bash
       run: echo "PYVISTA_OFF_SCREEN=true" >> $GITHUB_ENV
-
-    - name: Configure for PyVista on Windows
-      if: runner.os == 'Windows' && inputs.pyvista != 'false'
-      shell: powershell
-      run: |
-        chcp 65001 #set code page to utf-8
-        echo "PYVISTA_OFF_SCREEN=true" >> $env:GITHUB_ENV
