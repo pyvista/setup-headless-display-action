@@ -7,5 +7,5 @@ curl -LO https://github.com/pal1000/mesa-dist-win/releases/download/${VER}/${NAM
 ls -alR ${NAME}/
 mv -v ${NAME}/x64/* /C/Windows/System32/
 rm -Rf ${NAME}
-takeown /f "C:\Windows\System32\opengl32.dll"
-icacls "C:\Windows\System32\opengl32.dll" /grant "$USERNAME:F"
+# takeown "/f" "C:\Windows\System32\opengl32.dll"
+# icacls "C:\Windows\System32\opengl32.dll" /grant "$USERNAME:F"
