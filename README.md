@@ -4,7 +4,7 @@ Setup a headless display on Linux and Windows (not needed on MacOS)
 
 ```yml
 - name: Setup headless display
-  uses: pyvista/setup-headless-display-action@v2
+  uses: pyvista/setup-headless-display-action@v3
 ```
 
 ## 🚀 Usage
@@ -28,8 +28,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup headless display
-        uses: pyvista/setup-headless-display-action@v2
+      - uses: pyvista/setup-headless-display-action@v3
 ```
 
 ### Options
@@ -37,7 +36,7 @@ jobs:
 - `qt` (default `false`): set to `true` to install libraries required for Qt
   on Linux, e.g.:
   ```yml
-      - uses: pyvista/setup-headless-display-action@v2
+      - uses: pyvista/setup-headless-display-action@v3
         with:
           qt: true
   ```
@@ -65,24 +64,14 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup headless display
-        uses: pyvista/setup-headless-display-action@v2
-
-      - name: Setup Python
-        uses: actions/setup-python@v1
+      - uses: actions/checkout@v4
+      - uses: pyvista/setup-headless-display-action@v3
+      - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
-
-      - name: Install PyVista
-        run: pip install pyvista
-
-      - name: Use PyVista
-        run: python -c "import pyvista;pyvista.Sphere().plot(screenshot='${{ matrix.os }}-sphere.png')"
-
-      - uses: actions/upload-artifact@v2
+          python-version: 3.12
+      - run: pip install pyvista
+      - run: python -c "import pyvista;pyvista.Sphere().plot(screenshot='${{ matrix.os }}-sphere.png')"
+      - uses: actions/upload-artifact@v4
         with:
           name: sphere
           path: ${{ matrix.os }}-sphere.png
