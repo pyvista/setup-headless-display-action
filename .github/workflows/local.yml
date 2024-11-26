@@ -39,6 +39,7 @@ jobs:
           python-version: "3.12"
       - run: pip install pyvista
       - run: python tests/test_pyvista.py
+      - run: python -c "import pyvista;print(pyvista.Report())"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-${{ matrix.qt }}-sphere
