@@ -58,7 +58,7 @@ runs:
     - name: Install OpenGL on Windows
       if: runner.os == 'Windows'
       shell: bash
-      run: bash ${{ github.action_path }}/windows/install_opengl.sh
+      run: bash $(cygpath -u ${{ github.action_path }})/windows/install_opengl.sh
 
     - name: Configure headless display on Linux
       if: runner.os == 'Linux'
