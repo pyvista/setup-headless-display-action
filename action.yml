@@ -70,7 +70,7 @@ runs:
         else
           export MESA3D_VERSION=${{ inputs.mesa3d-release }}
         fi
-        echo "MESA3D_VERSION=${MESA3D_VERSION}" >> $GITHUB_ENV
+        echo "MESA3D_VERSION=${MESA3D_VERSION}" | tee -a $GITHUB_ENV
 
     - name: Install OpenGL on Windows
       if: runner.os == 'Windows'
