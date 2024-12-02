@@ -15,7 +15,7 @@ inputs:
       Mesa3D release to install (by default, the latest release is installed).
       This is only used on Windows.
     required: false
-    default: "latest"
+    default: "24.3.0"
 branding:
   icon: "monitor"
   color: "blue"
