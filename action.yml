@@ -10,6 +10,12 @@ inputs:
     description: "Install libraries required for Qt on Linux"
     required: false
     default: false
+  mesa3d-release:
+    description: |
+      Mesa3D release to install (by default, the latest release is installed).
+      This is only used on Windows.
+    required: false
+    default: "latest"
 branding:
   icon: "monitor"
   color: "blue"
@@ -54,6 +60,17 @@ runs:
           libxkbcommon-x11-0 \
           mesa-utils \
           x11-utils
+
+    - name: Determine OpenGL version to install on Windows
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        if [ "${{ inputs.mesa3d-release }}" == "latest" ]; then
+          export MESA3D_VERSION=$(curl -s https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+        else
+          export MESA3D_VERSION=${{ inputs.mesa3d-release }}
+        fi
+        echo "MESA3D_VERSION=${MESA3D_VERSION}" >> $GITHUB_ENV
 
     - name: Install OpenGL on Windows
       if: runner.os == 'Windows'
