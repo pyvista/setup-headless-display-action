@@ -43,6 +43,16 @@ jobs:
 - `pyvista` (default `true`): set to `false` if you don't want to set env
   vars to use PyVista in offscreen mode.
 
+- `mesa3d-release` (default `24.3.0`): set to a specific release to install
+  that version of Mesa3D. This is only applicable for Windows. For example,
+  to install Mesa3D 21.2.5:
+  ```yml
+      - uses: pyvista/setup-headless-display-action@v3
+        with:
+          mesa3d-release: 21.2.5
+  ```
+  You can also use `latest` to use the latest release version.
+
 ### 🖼️ PyVista Example
 
 ```yml

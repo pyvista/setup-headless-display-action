@@ -18,6 +18,7 @@ jobs:
       matrix:
         os: [macos-14, macos-13, ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, windows-2019, windows-2022]
         qt: [""]
+        mesa: [""]
         include:
           - os: ubuntu-20.04
             qt: "pyqt5"
@@ -25,6 +26,7 @@ jobs:
             qt: "pyqt6"
           - os: windows-latest
             qt: "pyqt6"
+            mesa: "latest"
           - os: ubuntu-latest
             qt: "pyside6"
     runs-on: ${{ matrix.os }}
@@ -34,6 +36,7 @@ jobs:
         uses: ./
         with:
           qt: ${{ matrix.qt != '' }}
+          mesa3d-release: ${{ matrix.mesa || '24.3.0' }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
