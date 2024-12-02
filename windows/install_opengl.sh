@@ -14,6 +14,7 @@ curl -LO https://github.com/pal1000/mesa-dist-win/releases/download/${MESA3D_VER
 # Run systemwidedeploy.cmd file: option 1) Install OpenGL drivers & 7) Update system-wide deployment
 cmd.exe //c "${NAME}\systemwidedeploy.cmd 1"
 cmd.exe //c "${NAME}\systemwidedeploy.cmd 7"
+rm -Rf ${NAME}
 # takeown "/f" "C:\Windows\System32\opengl32.dll"
 # icacls "C:\Windows\System32\opengl32.dll" /grant "$USERNAME:F"
 ls -alt /C/Windows/System32/opengl32.dll
