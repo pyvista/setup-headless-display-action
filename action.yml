@@ -72,7 +72,6 @@ runs:
           echo "Using specified Mesa3D release version..."
           export MESA3D_VERSION=${{ inputs.mesa3d-release }}
         fi
-        echo "Mesa3D version to be used: ${MESA3D_VERSION}"
         echo "MESA3D_VERSION=${MESA3D_VERSION}" | tee -a $GITHUB_ENV
 
     - name: Install OpenGL on Windows
