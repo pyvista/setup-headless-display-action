@@ -36,7 +36,8 @@ runs:
           libglx-mesa0 \
           libgl1 \
           xvfb \
-          x11-xserver-utils
+          x11-xserver-utils \
+          herbstluftwm
 
     - name: Install Linux Qt dependencies
       if: runner.os == 'Linux' && inputs.qt != 'false'
@@ -86,6 +87,13 @@ runs:
         export DISPLAY=:99.0
         echo "DISPLAY=:99.0" >> $GITHUB_ENV
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        sleep 3
+
+    - name: Start window manager on Linux
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        herbstluftwm &
         sleep 3
 
     - name: Configure for PyVista
