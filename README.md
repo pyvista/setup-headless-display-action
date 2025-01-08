@@ -35,22 +35,29 @@ jobs:
 
 - `qt` (default `false`): set to `true` to install libraries required for Qt
   on Linux, e.g.:
+
   ```yml
       - uses: pyvista/setup-headless-display-action@v3
         with:
           qt: true
   ```
+
 - `pyvista` (default `true`): set to `false` if you don't want to set env
   vars to use PyVista in offscreen mode.
+
+- `wm` (default `herbstluftwm`): Installs window manager on Linux.
+  set to `false` if you don't want to install a window manager.
 
 - `mesa3d-release` (default `24.3.0`): set to a specific release to install
   that version of Mesa3D. This is only applicable for Windows. For example,
   to install Mesa3D 21.2.5:
+
   ```yml
       - uses: pyvista/setup-headless-display-action@v3
         with:
           mesa3d-release: 21.2.5
   ```
+
   You can also use `latest` to use the latest release version.
 
 ### 🖼️ PyVista Example

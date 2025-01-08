@@ -5,11 +5,15 @@ inputs:
   pyvista:
     description: "Set PyVista env vars for headless mode"
     required: false
-    default: true
+    default: "true"
   qt:
     description: "Install libraries required for Qt on Linux"
     required: false
-    default: false
+    default: "false"
+  wm:
+    description: "Install window manager on Linux"
+    required: false
+    default: "herbstluftwm"
   mesa3d-release:
     description: |
       Mesa3D release to install (by default, the latest release is installed).
@@ -37,6 +41,11 @@ runs:
           libgl1 \
           xvfb \
           x11-xserver-utils
+
+    - name: Install Linux Window manager
+      shell: bash
+      if: runner.os == 'Linux' && inputs.wm == 'herbstluftwm'
+      run: sudo apt-get install -y herbstluftwm
 
     - name: Install Linux Qt dependencies
       if: runner.os == 'Linux' && inputs.qt != 'false'
@@ -86,6 +95,13 @@ runs:
         export DISPLAY=:99.0
         echo "DISPLAY=:99.0" >> $GITHUB_ENV
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        sleep 3
+
+    - name: Start window manager on Linux
+      if: runner.os == 'Linux' && inputs.wm == 'herbstluftwm'
+      shell: bash
+      run: |
+        herbstluftwm &
         sleep 3
 
     - name: Configure for PyVista
