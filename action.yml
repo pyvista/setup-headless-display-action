@@ -5,11 +5,15 @@ inputs:
   pyvista:
     description: "Set PyVista env vars for headless mode"
     required: false
-    default: true
+    default: "true"
   qt:
     description: "Install libraries required for Qt on Linux"
     required: false
-    default: false
+    default: "false"
+  window_manager:
+    description: "Install herbstluftwm window manager on Linux"
+    required: false
+    default: "true"
   mesa3d-release:
     description: |
       Mesa3D release to install (by default, the latest release is installed).
@@ -90,7 +94,7 @@ runs:
         sleep 3
 
     - name: Start window manager on Linux
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux' && inputs.window_manager != 'false'
       shell: bash
       run: |
         herbstluftwm &
