@@ -10,10 +10,10 @@ inputs:
     description: "Install libraries required for Qt on Linux"
     required: false
     default: "false"
-  window_manager:
-    description: "Install herbstluftwm window manager on Linux"
+  wm:
+    description: "Install window manager on Linux"
     required: false
-    default: "true"
+    default: "herbstluftwm"
   mesa3d-release:
     description: |
       Mesa3D release to install (by default, the latest release is installed).
@@ -40,8 +40,12 @@ runs:
           libglx-mesa0 \
           libgl1 \
           xvfb \
-          x11-xserver-utils \
-          herbstluftwm
+          x11-xserver-utils
+
+    - name: Install Linux Window manager
+      shell: bash
+      if: runner.os == 'Linux' && inputs.wm == 'herbstluftwm'
+      run: sudo apt-get install -y herbstluftwm
 
     - name: Install Linux Qt dependencies
       if: runner.os == 'Linux' && inputs.qt != 'false'
@@ -94,7 +98,7 @@ runs:
         sleep 3
 
     - name: Start window manager on Linux
-      if: runner.os == 'Linux' && inputs.window_manager != 'false'
+      if: runner.os == 'Linux' && inputs.wm == 'herbstluftwm'
       shell: bash
       run: |
         herbstluftwm &

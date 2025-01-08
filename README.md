@@ -45,9 +45,8 @@ jobs:
 - `pyvista` (default `true`): set to `false` if you don't want to set env
   vars to use PyVista in offscreen mode.
 
-- `window_manager` (default `true`): set to `false` if you don't want to
-  install a window manager (currently herbstluftwm) on Linux.
-  This is only applicable for Linux.
+- `wm` (default `herbstluftwm`): Installs window manager on Linux.
+  set to `false` if you don't want to install a window manager.
 
 - `mesa3d-release` (default `24.3.0`): set to a specific release to install
   that version of Mesa3D. This is only applicable for Windows. For example,
