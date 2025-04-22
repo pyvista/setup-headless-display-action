@@ -127,4 +127,4 @@ runs:
       if: runner.os == 'Windows' && inputs.install-mesa-offscreen == 'true'
       shell: bash
       run: |
-        echo "VTK_DEFAULT_OPENGL_WINDOW='vtkOSOpenGLRenderWindow'" >> $GITHUB_ENV
+        echo "VTK_DEFAULT_OPENGL_WINDOW=vtkOSOpenGLRenderWindow" >> $GITHUB_ENV
