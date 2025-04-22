@@ -25,7 +25,7 @@ inputs:
       Install Mesa3D off-screen renderer on Windows (by default, it is not installed).
       This is only used on Windows.
     required: false
-    default: "false"
+    default: "true"
 branding:
   icon: "monitor"
   color: "blue"
