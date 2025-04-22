@@ -89,11 +89,11 @@ runs:
         fi
         echo "MESA3D_VERSION=${MESA3D_VERSION}" | tee -a $GITHUB_ENV
 
-    - name: Determine if off-screen renderer is needed on Windows
+    - name: Enable Mesa3D off-screen renderer on Windows
       if: runner.os == 'Windows' && inputs.install-mesa3d-offscreen == 'true'
       shell: bash
       run: |
-        echo "Installing Mesa3D off-screen renderer..."
+        echo "Enabling Mesa3D off-screen renderer for Windows..."
         export MESA3D_OFFSCREEN="true"
         echo "MESA3D_OFFSCREEN=${MESA3D_OFFSCREEN}" | tee -a $GITHUB_ENV
 
