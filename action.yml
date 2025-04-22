@@ -20,7 +20,7 @@ inputs:
       This is only used on Windows.
     required: false
     default: "24.3.0"
-  install-mesa-offscreen:
+  install-mesa3d-offscreen:
     description: |
       Install Mesa3D off-screen renderer on Windows (by default, it is not installed).
       This is only used on Windows.
@@ -90,7 +90,7 @@ runs:
         echo "MESA3D_VERSION=${MESA3D_VERSION}" | tee -a $GITHUB_ENV
 
     - name: Determine if off-screen renderer is needed on Windows
-      if: runner.os == 'Windows' && inputs.install-mesa-offscreen == 'true'
+      if: runner.os == 'Windows' && inputs.install-mesa3d-offscreen == 'true'
       shell: bash
       run: |
         echo "Installing Mesa3D off-screen renderer..."
@@ -124,7 +124,7 @@ runs:
       run: echo "PYVISTA_OFF_SCREEN=true" >> $GITHUB_ENV
 
     - name: Configure Mesa3D for PyVista/VTK (on Windows)
-      if: runner.os == 'Windows' && inputs.install-mesa-offscreen == 'true'
+      if: runner.os == 'Windows' && inputs.install-mesa3d-offscreen == 'true'
       shell: bash
       run: |
         echo "VTK_DEFAULT_OPENGL_WINDOW=vtkOSOpenGLRenderWindow" >> $GITHUB_ENV
