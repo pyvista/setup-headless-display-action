@@ -20,6 +20,8 @@ jobs:
         qt: [""]
         mesa: [""]
         include:
+          - os: ubuntu-22.04
+            qt: "pyqt5"
           - os: ubuntu-24.04
             qt: "pyqt6"
           - os: windows-latest
