@@ -16,11 +16,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-13, ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, windows-2019, windows-2022]
+        os: [macos-14, macos-13, ubuntu-24.04, ubuntu-22.04, windows-2019, windows-2022]
         qt: [""]
         mesa: [""]
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             qt: "pyqt5"
           - os: ubuntu-24.04
             qt: "pyqt6"
