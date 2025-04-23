@@ -60,7 +60,7 @@ jobs:
 
   You can also use `latest` to use the latest release version.
 
-- `install-mesa3d-offscreen` (default `false`): set to `true` to install the
+- `install-mesa3d-offscreen` (default `true`): installs the
   offscreen version of Mesa3D on Windows. This is only applicable for Windows.
   This will also set the `VTK_DEFAULT_OPENGL_WINDOW` environment variable to
   `vtkOSOpenGLRenderWindow` based on the [VTK Runtime settings](https://docs.vtk.org/en/latest/advanced/runtime_settings.html)

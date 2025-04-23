@@ -22,7 +22,8 @@ inputs:
     default: "24.3.0"
   install-mesa3d-offscreen:
     description: |
-      Install Mesa3D off-screen renderer on Windows (by default, it is not installed).
+      Installs Mesa3D off-screen renderer on Windows. Configures VTK to use it
+      by means of the `VTK_DEFAULT_OPENGL_WINDOW` environment variable.
       This is only used on Windows.
     required: false
     default: "true"
