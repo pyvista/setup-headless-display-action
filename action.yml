@@ -11,9 +11,10 @@ inputs:
     required: false
     default: "false"
   wm:
-    description: "Install window manager on Linux"
+    description: |
+      Install window manager on Linux. Can currently be "false" or "herbstluftwm".
     required: false
-    default: "herbstluftwm"
+    default: "false"
   mesa3d-release:
     description: |
       Mesa3D release to install (by default, the latest release is installed).
