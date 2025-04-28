@@ -12,7 +12,7 @@ jobs:
         os: [macos-14, macos-13, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: pyvista/setup-headless-display-action@v3
+      - uses: pyvista/setup-headless-display-action@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.12
