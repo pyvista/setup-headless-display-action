@@ -83,8 +83,13 @@ runs:
       shell: bash
       run: |
         if [ "${{ inputs.mesa3d-release }}" == "latest" ]; then
-          echo "Fetching latest Mesa3D release version..."
-          export MESA3D_VERSION=$(curl -s https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest | grep -o '"tag_name": ".*"' | sed 's/"tag_name": "\(.*\)"/\1/')
+          if [[ "${{ inputs.install-mesa3d-offscreen }}" == "true" ]]; then
+            echo "Using latest Mesa3D release with off-screen renderer..."
+            export MESA3D_VERSION=25.0.7
+          else
+            echo "Fetching latest Mesa3D release version..."
+            export MESA3D_VERSION=$(curl -s https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest | grep -o '"tag_name": ".*"' | sed 's/"tag_name": "\(.*\)"/\1/')
+          fi
         else
           echo "Using specified Mesa3D release version..."
           export MESA3D_VERSION=${{ inputs.mesa3d-release }}
