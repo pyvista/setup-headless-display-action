@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15, macos-14, macos-13, ubuntu-24.04, ubuntu-22.04, windows-2025, windows-2022]
+        os: [macos-15, macos-14, macos-15-intel, ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, windows-2025, windows-2022]
         qt: [""]
         mesa: [""]
         include:
@@ -30,6 +30,7 @@ jobs:
           - os: ubuntu-latest
             qt: "pyside6"
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
       - name: Test Action
