@@ -19,7 +19,7 @@ jobs:
       - run: pip install pyvista
       - name: Use PyVista
         run: python -c "import pyvista;pyvista.Sphere().plot(screenshot='${{ matrix.os }}-sphere.png')"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.os }}-sphere
           path: ${{ matrix.os }}-sphere.png

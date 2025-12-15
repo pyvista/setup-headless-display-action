@@ -44,7 +44,7 @@ jobs:
       - run: pip install pyvista
       - run: python tests/test_pyvista.py
       - run: python -c "import pyvista;print(pyvista.Report())"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.os }}-${{ matrix.qt }}-sphere
           path: sphere.png
@@ -58,7 +58,7 @@ jobs:
           pip install ${{ matrix.qt }} matplotlib qtpy
           QT_DEBUG_PLUGINS=1 LIBGL_DEBUG=verbose python tests/test_qt.py
         shell: bash
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.os }}-${{ matrix.qt }}-cube
           path: ${{ matrix.os }}-${{ matrix.qt }}-cube.png
@@ -71,7 +71,7 @@ jobs:
         env:
           MATRIX_OS: ${{ matrix.os }}
           MATRIX_QT: ${{ matrix.qt }}
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: matrix.qt != ''
         with:
           name: ${{ matrix.os }}-${{ matrix.qt }}-vispy-volume
