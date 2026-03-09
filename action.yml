@@ -76,7 +76,8 @@ runs:
           libxcb-xinput0 \
           libxkbcommon-x11-0 \
           mesa-utils \
-          x11-utils
+          x11-utils \
+          libpulse0
 
     - name: Determine OpenGL version to install on Windows
       if: runner.os == 'Windows'
