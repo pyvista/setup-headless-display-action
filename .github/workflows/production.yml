@@ -5,6 +5,9 @@ on:  # yamllint disable-line rule:truthy
   schedule:
     - cron: "0 4 1 * *"
 
+permissions:
+  contents: read
+
 jobs:
   test:
     timeout-minutes: 15
