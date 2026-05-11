@@ -5,11 +5,15 @@ on:  # yamllint disable-line rule:truthy
   schedule:
     - cron: "0 4 1 * *"
 
+permissions:
+  contents: read
+
 jobs:
   test:
+    timeout-minutes: 15
     strategy:
       matrix:
-        os: [macos-14, macos-13, ubuntu-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: pyvista/setup-headless-display-action@v4
