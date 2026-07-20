@@ -38,7 +38,7 @@ jobs:
         with:
           qt: ${{ matrix.qt != '' }}
           mesa3d-release: ${{ matrix.mesa || '24.3.0' }}
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install pyvista
