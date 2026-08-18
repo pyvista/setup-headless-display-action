@@ -34,50 +34,50 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Update apt
-      if: runner.os == 'Linux'
-      shell: bash
-      # TODO: Pyvista uses `xset` which is part of x11-xserver-utils, maybe a better way to check?
-      run: sudo apt update
-
     - name: Install Linux dependencies
       if: runner.os == 'Linux'
       shell: bash
+      env:
+        QT: ${{ inputs.qt }}
+        WM: ${{ inputs.wm }}
       run: |
-        sudo apt-get install -y \
-          libglx-mesa0 \
-          libgl1 \
-          xvfb \
-          x11-xserver-utils
-
-    - name: Install Linux Window manager
-      shell: bash
-      if: runner.os == 'Linux' && inputs.wm == 'herbstluftwm'
-      run: sudo apt-get install -y herbstluftwm
-
-    - name: Install Linux Qt dependencies
-      if: runner.os == 'Linux' && inputs.qt != 'false'
-      shell: bash
-      run: |
-        sudo apt-get install -y \
-          libdbus-1-3 \
-          libegl1 \
-          libopengl0 \
-          libosmesa6 \
-          libxcb-cursor0 \
-          libxcb-icccm4 \
-          libxcb-image0 \
-          libxcb-keysyms1 \
-          libxcb-randr0 \
-          libxcb-render-util0 \
-          libxcb-shape0 \
-          libxcb-xfixes0 \
-          libxcb-xinerama0 \
-          libxcb-xinput0 \
-          libxkbcommon-x11-0 \
-          mesa-utils \
-          x11-utils \
-          libpulse0
+        # Bail out on a stalled mirror connection and retry instead of hanging for hours
+        opts=(
+          -o Acquire::Retries=3
+          -o Acquire::http::Timeout=30
+          -o Acquire::https::Timeout=30
+          -o DPkg::Lock::Timeout=120  # wait out unattended-upgrades rather than erroring
+          -o Dpkg::Options::=--force-unsafe-io  # no fsync; the runner is ephemeral
+        )
+        packages=(libglx-mesa0 libgl1 xvfb x11-xserver-utils)
+        if [[ "$WM" == "herbstluftwm" ]]; then
+          packages+=(herbstluftwm)
+        fi
+        if [[ "$QT" != "false" ]]; then
+          packages+=(
+            libdbus-1-3
+            libegl1
+            libopengl0
+            libosmesa6
+            libpulse0
+            libxcb-cursor0
+            libxcb-icccm4
+            libxcb-image0
+            libxcb-keysyms1
+            libxcb-randr0
+            libxcb-render-util0
+            libxcb-shape0
+            libxcb-xfixes0
+            libxcb-xinerama0
+            libxcb-xinput0
+            libxkbcommon-x11-0
+            mesa-utils
+            x11-utils
+          )
+        fi
+        # `timeout` backstops hangs the apt-level timeouts above do not cover
+        sudo timeout 5m apt-get update "${opts[@]}"
+        sudo DEBIAN_FRONTEND=noninteractive timeout 10m apt-get install -y "${opts[@]}" "${packages[@]}"
 
     - name: Determine OpenGL version to install on Windows
       if: runner.os == 'Windows'
@@ -89,7 +89,7 @@ runs:
             export MESA3D_VERSION=25.0.7
           else
             echo "Fetching latest Mesa3D release version..."
-            export MESA3D_VERSION=$(curl -s https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest | grep -o '"tag_name": ".*"' | sed 's/"tag_name": "\(.*\)"/\1/')
+            export MESA3D_VERSION=$(curl -s --retry 3 --connect-timeout 30 --max-time 60 https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest | grep -o '"tag_name": ".*"' | sed 's/"tag_name": "\(.*\)"/\1/')
           fi
         else
           echo "Using specified Mesa3D release version..."
@@ -117,14 +117,21 @@ runs:
         export DISPLAY=:99.0
         echo "DISPLAY=:99.0" >> $GITHUB_ENV
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        sleep 3
+        for _ in $(seq 100); do
+          xset q > /dev/null 2>&1 && break
+          sleep 0.1
+        done
+        xset q > /dev/null  # fail here rather than with a cryptic error downstream
 
     - name: Start window manager on Linux
       if: runner.os == 'Linux' && inputs.wm == 'herbstluftwm'
       shell: bash
       run: |
         herbstluftwm &
-        sleep 3
+        for _ in $(seq 100); do
+          herbstclient version > /dev/null 2>&1 && break
+          sleep 0.1
+        done
 
     - name: Configure for PyVista
       if: inputs.pyvista != 'false'
