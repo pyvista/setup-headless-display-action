@@ -10,9 +10,17 @@ inputs:
     description: "Install libraries required for Qt on Linux"
     required: false
     default: "false"
+  # Every window manager here implies its session type, because none of them
+  # can do both: herbstluftwm is X11-only and weston is Wayland-only. A wm that
+  # runs on either (gnome-shell, kwin) would need a separate input saying which
+  # session to start; nothing needs that yet.
   wm:
     description: |
-      Install window manager on Linux. Can currently be "false" or "herbstluftwm".
+      Window manager to run on Linux. Can currently be "false", "herbstluftwm"
+      (X11, started on top of Xvfb), or "weston" (a headless Wayland
+      compositor, which replaces Xvfb rather than running on top of it: no X
+      server is started, DISPLAY is left unset, and QT_QPA_PLATFORM is set to
+      "wayland").
     required: false
     default: "false"
   mesa3d-release:
@@ -49,9 +57,29 @@ runs:
           -o DPkg::Lock::Timeout=120  # wait out unattended-upgrades rather than erroring
           -o Dpkg::Options::=--force-unsafe-io  # no fsync; the runner is ephemeral
         )
-        packages=(libglx-mesa0 libgl1 xvfb x11-xserver-utils)
-        if [[ "$WM" == "herbstluftwm" ]]; then
-          packages+=(herbstluftwm)
+        packages=(libglx-mesa0 libgl1)
+        if [[ "$WM" == "weston" ]]; then
+          # weston pulls in libwayland-server0/libdrm; the rest is what a Mesa
+          # EGL client needs to talk to it, plus the keymap data weston compiles
+          # at startup. No xvfb: Weston is the display server here, not a
+          # window manager running on top of one.
+          packages+=(
+            weston
+            libegl1
+            libegl-mesa0
+            libgl1-mesa-dri
+            libgles2
+            libopengl0
+            libwayland-egl1
+            libxkbcommon0
+            xkb-data
+          )
+        else
+          packages+=(xvfb x11-xserver-utils)
+          # herbstluftwm is X11-only, so it can only join the Xvfb path
+          if [[ "$WM" == "herbstluftwm" ]]; then
+            packages+=(herbstluftwm)
+          fi
         fi
         if [[ "$QT" != "false" ]]; then
           packages+=(
@@ -110,12 +138,15 @@ runs:
       shell: cmd
       run: bash ${{ github.action_path }}\windows\install_opengl.sh
 
-    - name: Configure headless display on Linux
-      if: runner.os == 'Linux'
+    - name: Start a headless X server (Xvfb) on Linux
+      if: runner.os == 'Linux' && inputs.wm != 'weston'
       shell: bash
       run: |
         export DISPLAY=:99.0
         echo "DISPLAY=:99.0" >> $GITHUB_ENV
+        # Qt (and GTK, and SDL) consult XDG_SESSION_TYPE when picking a
+        # backend, so leave no room for it to guess differently than we set up
+        echo "XDG_SESSION_TYPE=x11" >> $GITHUB_ENV
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         for _ in $(seq 100); do
           xset q > /dev/null 2>&1 && break
@@ -123,7 +154,75 @@ runs:
         done
         xset q > /dev/null  # fail here rather than with a cryptic error downstream
 
-    - name: Start window manager on Linux
+    - name: Start a headless Wayland compositor (Weston) on Linux
+      if: runner.os == 'Linux' && inputs.wm == 'weston'
+      shell: bash
+      run: |
+        # The runners have no GPU, and unlike the Xvfb path a Wayland client
+        # cannot fall back to OSMesa: it either gets an EGL context from the
+        # compositor or it gets nothing. Pin both ends to llvmpipe.
+        export LIBGL_ALWAYS_SOFTWARE=1
+        export GALLIUM_DRIVER=llvmpipe
+        export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-${RUNNER_TEMP}/xdg-runtime-dir}"
+        mkdir -p "$XDG_RUNTIME_DIR"
+        chmod 700 "$XDG_RUNTIME_DIR"
+        WAYLAND_DISPLAY=wayland-headless
+        socket="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
+        log="${RUNNER_TEMP}/weston.log"
+        weston --version
+        # Two things vary across the Weston releases in Ubuntu, and both matter:
+        #   * Weston 14 renamed the backend "headless-backend.so" -> "headless".
+        #   * Selecting the GL renderer was "--use-gl" before Weston 10 and is
+        #     "--renderer=gl" after.
+        # The renderer is not optional: the headless backend defaults to pixman,
+        # which advertises neither wl_drm nor linux-dmabuf, so Mesa hands a
+        # client no EGL context and a QOpenGLWidget has nothing to render into.
+        # A job in that state passes while testing nothing, so only GL-capable
+        # spellings are tried and the compositor's own log is checked for the
+        # renderer it actually loaded.
+        for args in \
+          "--backend=headless --renderer=gl" \
+          "--backend=headless-backend.so --renderer=gl" \
+          "--backend=headless-backend.so --use-gl"; do
+          echo "Trying: weston $args"
+          rm -f "$socket" "$socket.lock"
+          # shellcheck disable=SC2086
+          nohup weston $args --socket="$WAYLAND_DISPLAY" \
+            --width=1920 --height=1080 --idle-time=0 >"$log" 2>&1 &
+          pid=$!
+          for _ in $(seq 60); do
+            if [ -S "$socket" ]; then
+              break
+            fi
+            if ! kill -0 "$pid" 2>/dev/null; then
+              break
+            fi
+            sleep 0.5
+          done
+          # Weston creates the socket only after the backend and renderer are
+          # up, so by now the log says which renderer won.
+          if [ -S "$socket" ] && grep -qE 'Using GL renderer|GL renderer: ' "$log"; then
+            echo "Compositor is up: weston $args"
+            {
+              echo "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
+              echo "WAYLAND_DISPLAY=$WAYLAND_DISPLAY"
+              echo "XDG_SESSION_TYPE=wayland"
+              echo "QT_QPA_PLATFORM=wayland"
+              echo "LIBGL_ALWAYS_SOFTWARE=1"
+              echo "GALLIUM_DRIVER=llvmpipe"
+              echo "WESTON_LOG=$log"
+            } | tee -a "$GITHUB_ENV"
+            exit 0
+          fi
+          kill "$pid" 2>/dev/null || true
+          wait "$pid" 2>/dev/null || true
+          echo "--- weston.log for: $args ---"
+          cat "$log" || true
+        done
+        echo "::error::Weston never came up on the GL renderer"
+        exit 1
+
+    - name: Start window manager (herbstluftwm) on Linux
       if: runner.os == 'Linux' && inputs.wm == 'herbstluftwm'
       shell: bash
       run: |

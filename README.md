@@ -45,8 +45,31 @@ jobs:
 - `pyvista` (default `true`): set to `false` if you don't want to set env
   vars to use PyVista in offscreen mode.
 
-- `wm` (default `false`): Installs window manager on Linux.
-  Set to `herbstluftwm` if you want to install a window manager.
+- `wm` (default `false`): Installs and starts a window manager on Linux. Set to
+  `herbstluftwm` for a window manager on top of the Xvfb display, or to
+  `weston` for a headless Wayland session *instead of* Xvfb, e.g.:
+
+  ```yml
+      - uses: pyvista/setup-headless-display-action@v3
+        with:
+          qt: true
+          wm: weston
+  ```
+
+  `weston` is the odd one out, because a Wayland compositor replaces the
+  display server rather than running on top of one. It starts headless
+  [Weston](https://gitlab.freedesktop.org/wayland/weston) on the GL renderer
+  and exports `WAYLAND_DISPLAY`, `XDG_RUNTIME_DIR`, `XDG_SESSION_TYPE=wayland`,
+  and `QT_QPA_PLATFORM=wayland`, plus `LIBGL_ALWAYS_SOFTWARE=1` and
+  `GALLIUM_DRIVER=llvmpipe` because the runners have no GPU and a Wayland
+  client cannot fall back to OSMesa the way an X11 one can. The compositor log
+  is left at `$WESTON_LOG`.
+
+  No X server is started in that mode and `DISPLAY` is left unset, so a Qt
+  binding missing its Wayland platform plugin fails loudly instead of quietly
+  testing xcb.
+
+  Only Linux is affected; on macOS and Windows this input is ignored.
 
 - `mesa3d-release` (default `24.3.0`): set to a specific release to install
   that version of Mesa3D. This is only applicable for Windows. For example,

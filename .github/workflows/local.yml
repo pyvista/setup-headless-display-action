@@ -19,6 +19,7 @@ jobs:
         os: [macos-26, macos-26-intel, macos-15, macos-14, macos-15-intel, ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, windows-2025, windows-2022]
         qt: [""]
         mesa: [""]
+        wm: [""]
         include:
           - os: ubuntu-22.04
             qt: "pyqt5"
@@ -29,14 +30,28 @@ jobs:
             mesa: "latest"
           - os: ubuntu-latest
             qt: "pyside6"
+          # the only entry that exercises the cocoa branch of tests/test_qt.py
+          - os: macos-latest
+            qt: "pyqt6"
+          # Wayland instead of Xvfb: a headless Weston compositor, no DISPLAY
+          - os: ubuntu-latest
+            qt: "pyqt6"
+            wm: "weston"
+          - os: ubuntu-latest
+            qt: "pyside6"
+            wm: "weston"
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
+    timeout-minutes: 15
+    env:
+      # Weston reruns existing os/qt combinations, so artifacts need the axis
+      ARTIFACT_PREFIX: ${{ matrix.os }}-${{ matrix.qt }}${{ matrix.wm && format('-{0}', matrix.wm) || '' }}
     steps:
       - uses: actions/checkout@v7
       - name: Test Action
         uses: ./
         with:
           qt: ${{ matrix.qt != '' }}
+          wm: ${{ matrix.wm || 'false' }}
           mesa3d-release: ${{ matrix.mesa || '24.3.0' }}
       - uses: actions/setup-python@v7
         with:
@@ -46,11 +61,11 @@ jobs:
       - run: python -c "import pyvista;print(pyvista.Report())"
       - uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.os }}-${{ matrix.qt }}-sphere
+          name: ${{ env.ARTIFACT_PREFIX }}-sphere
           path: sphere.png
           if-no-files-found: error
       - name: Second test of PyVista
-        run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ matrix.os }}-${{ matrix.qt }}-cube.png')"
+        run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ env.ARTIFACT_PREFIX }}-cube.png')"
       - name: Test Qt
         if: matrix.qt != ''
         run: |
@@ -60,19 +75,20 @@ jobs:
         shell: bash
       - uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.os }}-${{ matrix.qt }}-cube
-          path: ${{ matrix.os }}-${{ matrix.qt }}-cube.png
+          name: ${{ env.ARTIFACT_PREFIX }}-cube
+          path: ${{ env.ARTIFACT_PREFIX }}-cube.png
           if-no-files-found: error
       - name: Test Vispy Qt
         if: matrix.qt != ''
         run: |
           pip install vispy pillow pyopengl
           python tests/test_vispy_qt.py
-        env:
-          MATRIX_OS: ${{ matrix.os }}
-          MATRIX_QT: ${{ matrix.qt }}
       - uses: actions/upload-artifact@v7
         if: matrix.qt != ''
         with:
-          name: ${{ matrix.os }}-${{ matrix.qt }}-vispy-volume
-          path: ${{ matrix.os }}-${{ matrix.qt }}-vispy-volume.png
+          name: ${{ env.ARTIFACT_PREFIX }}-vispy-volume
+          path: ${{ env.ARTIFACT_PREFIX }}-vispy-volume.png
+      - name: Compositor log
+        if: always() && matrix.wm == 'weston'
+        run: cat "$WESTON_LOG" || true
+        shell: bash
