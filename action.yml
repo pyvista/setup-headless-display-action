@@ -103,9 +103,15 @@ runs:
             x11-utils
           )
         fi
+        # Container-based runners (ubuntu-slim) already run as root and may
+        # ship no sudo at all, so ask for it only when it is actually needed.
+        sudo=()
+        if [[ "$(id -u)" -ne 0 ]]; then
+          sudo=(sudo)
+        fi
         # `timeout` backstops hangs the apt-level timeouts above do not cover
-        sudo timeout 5m apt-get update "${opts[@]}"
-        sudo DEBIAN_FRONTEND=noninteractive timeout 10m apt-get install -y "${opts[@]}" "${packages[@]}"
+        "${sudo[@]}" timeout 5m apt-get update "${opts[@]}"
+        "${sudo[@]}" env DEBIAN_FRONTEND=noninteractive timeout 10m apt-get install -y "${opts[@]}" "${packages[@]}"
 
     - name: Determine OpenGL version to install on Windows
       if: runner.os == 'Windows'

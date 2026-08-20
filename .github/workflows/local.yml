@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-26, macos-26-intel, macos-15, macos-14, macos-15-intel, ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, windows-2025, windows-2022]
+        os: [macos-26, macos-26-intel, macos-15, macos-14, macos-15-intel, ubuntu-26.04, ubuntu-24.04, ubuntu-22.04, ubuntu-26.04-arm, ubuntu-24.04-arm, ubuntu-22.04-arm, ubuntu-slim, windows-2025, windows-2022]
         qt: [""]
         mesa: [""]
         wm: [""]
@@ -40,8 +40,18 @@ jobs:
           - os: ubuntu-latest
             qt: "pyside6"
             wm: "weston"
+          # Weston 14, which spells the backend "headless" rather than
+          # "headless-backend.so", on both architectures. Same binding as the
+          # entries above so the compositor version and the arch are the only
+          # things that differ.
+          - os: ubuntu-26.04
+            qt: "pyqt6"
+            wm: "weston"
+          - os: ubuntu-26.04-arm
+            qt: "pyqt6"
+            wm: "weston"
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       # Weston reruns existing os/qt combinations, so artifacts need the axis
       ARTIFACT_PREFIX: ${{ matrix.os }}-${{ matrix.qt }}${{ matrix.wm && format('-{0}', matrix.wm) || '' }}
@@ -57,7 +67,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install pyvista
-      - run: python tests/test_pyvista.py
+      - name: Test PyVista
+        id: pyvista
+        run: python tests/test_pyvista.py
       - run: python -c "import pyvista;print(pyvista.Report())"
       - uses: actions/upload-artifact@v7
         with:
@@ -67,6 +79,7 @@ jobs:
       - name: Second test of PyVista
         run: python -c "import pyvista;pyvista.Cube().plot(screenshot='${{ env.ARTIFACT_PREFIX }}-cube.png')"
       - name: Test Qt
+        id: qt
         if: matrix.qt != ''
         run: |
           set -eo pipefail
@@ -88,6 +101,20 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_PREFIX }}-vispy-volume
           path: ${{ env.ARTIFACT_PREFIX }}-vispy-volume.png
+      - name: Diagnose a failed library load
+        # Only on failure: the LD_DEBUG third of this runs to thousands of
+        # lines. ubuntu-slim is what it is here for -- a container image with
+        # far less preinstalled than the full runner, so a plugin or driver
+        # dlopen is the likeliest thing to come up short.
+        if: always() && runner.os == 'Linux' && (steps.pyvista.outcome == 'failure' || steps.qt.outcome == 'failure')
+        run: |
+          if [[ "${{ steps.pyvista.outcome }}" == "failure" ]]; then
+            bash tests/debug_libs.sh tests/test_pyvista.py
+          fi
+          if [[ "${{ steps.qt.outcome }}" == "failure" ]]; then
+            bash tests/debug_libs.sh tests/test_qt.py
+          fi
+        shell: bash
       - name: Compositor log
         if: always() && matrix.wm == 'weston'
         run: cat "$WESTON_LOG" || true
