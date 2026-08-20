@@ -16,6 +16,6 @@ image = scene.visuals.Volume(vol_data, cmap="viridis", parent=view.scene)
 view.camera = scene.ArcballCamera()
 canvas.show()
 
-fname = f'{os.environ['MATRIX_OS']}-{os.environ['MATRIX_QT']}-vispy-volume.png'
+fname = f'{os.environ["ARTIFACT_PREFIX"]}-vispy-volume.png'
 out_path = Path(__file__).parent.parent / fname
 Image.fromarray(canvas.render()).save(out_path)
