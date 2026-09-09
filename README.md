@@ -86,7 +86,9 @@ jobs:
 - `install-mesa3d-offscreen` (default `true`): installs the
   offscreen version of Mesa3D on Windows. This is only applicable for Windows.
   This will also set the `VTK_DEFAULT_OPENGL_WINDOW` environment variable to
-  `vtkOSOpenGLRenderWindow` based on the [VTK Runtime settings](https://docs.vtk.org/en/latest/advanced/runtime_settings.html)
+  `vtkOSOpenGLRenderWindow` based on the [VTK Runtime settings](https://docs.vtk.org/en/latest/advanced/runtime_settings.html),
+  and `LP_NUM_THREADS` to `0` so that llvmpipe renders on the calling thread;
+  with its rasterizer threads active, a process that rendered can hang at exit.
   For example:
 
   ```yml
