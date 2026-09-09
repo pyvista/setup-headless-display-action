@@ -32,7 +32,8 @@ inputs:
   install-mesa3d-offscreen:
     description: |
       Installs Mesa3D off-screen renderer on Windows. Configures VTK to use it
-      by means of the `VTK_DEFAULT_OPENGL_WINDOW` environment variable.
+      by means of the `VTK_DEFAULT_OPENGL_WINDOW` environment variable, and
+      sets `LP_NUM_THREADS=0` so processes that rendered do not hang at exit.
       This is only used on Windows.
     required: false
     default: "true"
@@ -248,3 +249,5 @@ runs:
       shell: bash
       run: |
         echo "VTK_DEFAULT_OPENGL_WINDOW=vtkOSOpenGLRenderWindow" >> $GITHUB_ENV
+        # llvmpipe's rasterizer teardown deadlocks at process exit on Windows.
+        echo "LP_NUM_THREADS=0" >> $GITHUB_ENV
