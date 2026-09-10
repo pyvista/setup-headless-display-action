@@ -154,7 +154,8 @@ runs:
         # Qt (and GTK, and SDL) consult XDG_SESSION_TYPE when picking a
         # backend, so leave no room for it to guess differently than we set up
         echo "XDG_SESSION_TYPE=x11" >> $GITHUB_ENV
-        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        # -noreset: the reset after the last client leaves drops any client mid-connect
+        Xvfb :99 -screen 0 1024x768x24 -noreset > /dev/null 2>&1 &
         for _ in $(seq 100); do
           xset q > /dev/null 2>&1 && break
           sleep 0.1
